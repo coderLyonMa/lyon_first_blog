@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} Mario's Blog {% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+    <h1>
+        Hello {% if name %}{{ name }}{% else %}Stranger{% endif %}!
+        {% if not known %}
+        Welcome to Mario's Blog!
+        {% else %}
+        Nice to see you again!
+        {% endif %}
+    </h1>
+</div>
+{{ wtf.quick_form(form) }}
+<p>The local date and time is {{ moment(current_time).format('LLL') }}</p>
+<p>That was {{ moment(current_time).fromNow(refresh=True)}}.</p>
+{% endblock %}
