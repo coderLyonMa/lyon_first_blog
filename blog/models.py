@@ -6,7 +6,7 @@ class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
     # 3个参数分别的作用是： 指定另一侧的类名， 本侧的属性一对多表达， 加载查询而非查询结果
-    users = db.relationship('User', backref='role', dynamic='lazy')
+    users = db.relationship('User', backref='role', lazy='dynamic')
 
     def __repr__(self):
         return '<Role %r>' % self.name

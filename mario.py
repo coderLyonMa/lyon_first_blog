@@ -1,7 +1,7 @@
 import os
-from app import create_app, db, mail
+from blog import create_app, db, mail
 from flask_migrate import Migrate
-from app.models import User, Role
+from blog.models import User, Role
 
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
