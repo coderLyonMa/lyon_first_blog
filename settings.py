@@ -7,7 +7,7 @@ class Config():
     MAIL_PORT = int(os.environ.get('MAIL_PORT', '587'))
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'coderlyonma@gmail.com')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
-    MARIO_MAIL_SUBJECT_PREFIX = "Welcome to Mario's blog!"
+    MARIO_SUBJECT_PREFIX = "Welcome to Mario's blog!"
     MARIO_MAIL_SENDER = "coderlyonma@gmail.com"
     ADMIN_MARIO = "coderlyonma@gmail.com"
     SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -18,7 +18,7 @@ def index():
             db.session.commit()
             session['known'] = False
             if current_app.config['ADMIN_MARIO']:
-                send_email(current_app['ADMIN_MARIO'], 'new user', 
+                send_email(current_app.config['ADMIN_MARIO'], 'new user',
                            'mail/new_user', user=user)
         else:
             session['known'] = True

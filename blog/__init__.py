@@ -24,5 +24,8 @@ def create_app(config_name):
     # 将蓝本注册到应用上
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+    # 注册身份验证蓝本到应用
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
     return app
