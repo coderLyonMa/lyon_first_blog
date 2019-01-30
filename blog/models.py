@@ -1,5 +1,7 @@
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
+from . import login_manager
 
 
 class Role(db.Model):
@@ -14,14 +16,16 @@ class Role(db.Model):
         return '<Role %r>' % self.name
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(128), unique=True, index=True)
+    email = db.Column(db.String(64), unique=True, index=True)
     # 外键指定一的那一侧
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
-
+    
+    
     @property
     def password(self):
         raise AttributeError('Password is not a readable attribute.')
@@ -35,3 +39,7 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
