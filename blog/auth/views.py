@@ -2,8 +2,8 @@ from flask import request, url_for, redirect, flash, render_template
 from flask_login import login_user, logout_user, login_required, current_user
 from . import auth
 from .forms import LoginForm, RegistrationForm, ChangePasswordForm, \
-    PasswordResetRequestForm, ResetPasswordForm
-from ..models import User
+    PasswordResetRequestForm, ResetPasswordForm, EmailChangeForm
+from ..models import User, db
 from ..email import send_email
 
 
@@ -60,6 +60,7 @@ def confirm(token):
     return redirect(url_for('main.index'))
 
 
+@auth.route('/confirm')
 @login_required
 def resend_confirmation():
     token = current_user.generate_confirmation_token()
@@ -90,7 +91,7 @@ def unconfirmed():
 def change_password():
     form = ChangePasswordForm()
     if form.validate_on_submit():
-        if form.old_password.data == current_user.password:
+        if current_user.verify_password(form.password.data):
             current_user.password = form.password.data
             db.session.add(current_user)
             db.session.commit()
@@ -101,7 +102,7 @@ def change_password():
     return render_template('auth/change_password.html', form=form)
 
 
-@auth.route('/reset-request', methods=['GET', 'POST'])
+@auth.route('/reset-password', methods=['GET', 'POST'])
 def password_reset_request():
     if not current_user.is_anonymous:
         return redirect(url_for('main.index'))
@@ -114,11 +115,11 @@ def password_reset_request():
                        'auth/email/reset_password', user=user, token=token)
         flash('A password reset email has been sent to you')
         return redirect(url_for('auth.login'))
-    return render_template('auth/reset_password.html')
+    return render_template('auth/reset_password.html', form=form)
 
 
-@auth.route('/reset_password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
+@auth.route('/reset-password/<token>', methods=['GET', 'POST'])
+def password_reset(token):
     if not current_user.is_anonymous:
         return redirect(url_for('main.index'))
     form = ResetPasswordForm()
@@ -129,4 +130,33 @@ def reset_password(token):
             return redirect(url_for('auth.login'))
         else:
             return redirect(url_for('main.index'))
-    return render_template('/auth/reset_password.html')
+    return render_template('/auth/reset_password.html', form=form)
+
+
+@auth.route('/change-email', methods=['GET', 'POST'])
+@login_required
+def email_change_request():
+    form = EmailChangeForm()
+    if form.validate_on_submit():
+        if current_user.verify_password(form.password.data):
+            new_email = form.new_email.data
+            token = current_user.generate_email_change_token(new_email)
+            send_email(form.new_email.data, 'Confirm your new email address',
+                       'auth/email/change_email',
+                       token=token, user=current_user)
+            flash('A confirmation has been sent to your by email')
+            return redirect(url_for('main.index'))
+        else:
+            flash('Invalid password')
+    return render_template('auth/change_email.html', form=form)
+
+
+@auth.route('/change-email/<token>')
+@login_required
+def change_email(token):
+    if current_user.change_email(token):
+        db.session.commit()
+        flash('Your email address has been updated!')
+    else:
+        flash('Invalid Request')
+    return redirect(url_for('main.index'))

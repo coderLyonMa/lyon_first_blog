@@ -6,7 +6,7 @@ from ..models import User
 
 
 class RegistrationForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired, Length(1, 64),
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
                                              Email()])
     username = StringField('Username', validators=[
         DataRequired(), Length(1, 64),
@@ -47,7 +47,7 @@ class ChangePasswordForm(FlaskForm):
 class PasswordResetRequestForm(FlaskForm):
     email = StringField('Enter your email address', validators=[DataRequired(),
                         Length(1, 64), Email()])
-    Submit = SubmitFIeld('Send Confirmation Email')
+    Submit = SubmitField('Send Confirmation Email')
 
 
 class ResetPasswordForm(FlaskForm):
@@ -55,3 +55,14 @@ class ResetPasswordForm(FlaskForm):
         DataRequired(), EqualTo('password2', message='passwords must match')])
     password2 = PasswordField('Confirm New Password', validators=[DataRequired()])
     submit = SubmitField('Update password')
+
+
+class EmailChangeForm(FlaskForm):
+    password = PasswordField('Your password', validators=[DataRequired()])
+    new_email = StringField('Enter your new email address', validators=[DataRequired(),
+                            Length(1, 64), Email()])
+    submit = SubmitField('Update Email')
+
+    def validate_email(self, field):
+        if User.query.filter_by(email=field.data).first():
+            raise ValidationError('Email address already registered.')

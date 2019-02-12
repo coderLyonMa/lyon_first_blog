@@ -5,7 +5,9 @@ class Config():
     SECRET_KEY = os.environ.get('SECRET KEY') or 'Jai guru deva om'
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'smtp.googlemail.com')
     MAIL_PORT = int(os.environ.get('MAIL_PORT', '587'))
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME', 'coderlyonma@gmail.com')
+    MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', 'true').lower() in \
+        ['true', 'on', '1']
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MARIO_SUBJECT_PREFIX = "Welcome to Mario's blog!"
     MARIO_MAIL_SENDER = "coderlyonma@gmail.com"
