@@ -6,7 +6,7 @@ from ..models import User
 
 
 class RegistrationForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired, Lenght(1, 64),
+    email = StringField('Email', validators=[DataRequired, Length(1, 64),
                                              Email()])
     username = StringField('Username', validators=[
         DataRequired(), Length(1, 64),
@@ -34,3 +34,24 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Keep me logged in')
     submit = SubmitField('Log in')
+
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField('Old Password', validators=[DataRequired()])
+    password = PasswordField('New Password', validators=[
+        DataRequired(), EqualTo('password2', message='passwords must match')])
+    password2 = PasswordField('Confirm New Password', validators=[DataRequired()])
+    submit = SubmitField('Update password')
+
+
+class PasswordResetRequestForm(FlaskForm):
+    email = StringField('Enter your email address', validators=[DataRequired(),
+                        Length(1, 64), Email()])
+    Submit = SubmitFIeld('Send Confirmation Email')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('New Password', validators=[
+        DataRequired(), EqualTo('password2', message='passwords must match')])
+    password2 = PasswordField('Confirm New Password', validators=[DataRequired()])
+    submit = SubmitField('Update password')
