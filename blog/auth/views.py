@@ -72,11 +72,14 @@ def resend_confirmation():
 
 @auth.before_app_request
 def before_request():
-    if current_user.is_authenticated \
-            and not current_user.confirmed \
-            and request.blueprint != 'auth' \
-            and request.endpoint != 'staitc':
-        return redirect(url_for('auth.unconfirmed'))
+    # 调用ping函数刷新用户的最后访问时间
+    if current_user.is_authenticated:
+        current_user.ping()
+        if not current_user.is_authenticated \
+                and not current_user.confirmed \
+                and request.blueprint != 'auth' \
+                and request.endpoint != 'staitc':
+            return redirect(url_for('auth.unconfirmed'))
 
 
 @auth.route('/unconfirmed')
