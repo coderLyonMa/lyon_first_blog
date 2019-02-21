@@ -4,6 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+faker = "*"
+flask-pagedown = "*"
+markdown = "*"
+bleach = "*"
 
 [packages]
 alembic = "==0.9.3"

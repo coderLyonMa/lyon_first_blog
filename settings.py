@@ -13,6 +13,7 @@ class Config():
     MARIO_MAIL_SENDER = "coderlyonma@gmail.com"
     ADMIN_MARIO = "coderlyonma@gmail.com"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    BLOG_POSTS_PER_PAGE = 10
     
     @staticmethod
     def init_app(app):
