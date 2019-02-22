@@ -14,6 +14,7 @@ class Config():
     ADMIN_MARIO = "coderlyonma@gmail.com"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BLOG_POSTS_PER_PAGE = 10
+    BLOG_FOLLOWERS_PER_PAGE = 20
     
     @staticmethod
     def init_app(app):
