@@ -1,9 +1,9 @@
 from flask import Blueprint
-from blog.models import Permission
 
 main = Blueprint('main', __name__)
 
 from . import views, errors
+from ..models import Permission
 
 @main.context_processor
 def inject_permissions():
