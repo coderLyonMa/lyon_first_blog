@@ -8,6 +8,8 @@ faker = "*"
 flask-pagedown = "*"
 markdown = "*"
 bleach = "*"
+flask-httpauth = "*"
+httpie = "*"
 
 [packages]
 alembic = "==0.9.3"
