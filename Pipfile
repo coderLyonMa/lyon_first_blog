@@ -10,6 +10,9 @@ markdown = "*"
 bleach = "*"
 flask-httpauth = "*"
 httpie = "*"
+coverage = "==4.4.1"
+flask = "==0.12.2"
+selenium = "*"
 
 [packages]
 alembic = "==0.9.3"
