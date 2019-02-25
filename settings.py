@@ -13,6 +13,8 @@ class Config():
     MARIO_MAIL_SENDER = "coderlyonma@gmail.com"
     ADMIN_MARIO = "coderlyonma@gmail.com"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_RECORD_QUIRIES = True
+    BLOG_SLOW_DB_QUERY_TIME = 0.5
     BLOG_POSTS_PER_PAGE = 10
     BLOG_FOLLOWERS_PER_PAGE = 20
     BLOG_COMMENTS_PER_PAGE = 10
@@ -38,6 +40,28 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('PROD_DATABASE_URI') or \
         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
+    @classmethod
+    def init_app(cls, app):
+        Config.init_app(app)
+
+        # notice admin when things go wrong
+        import logging
+        from logging.handlers import SMTPHandler
+        credentials = None
+        secure = None
+        if getattr(cls, 'MAIL_USERNAME', None) is not None:
+            credentials = (cls.MAIL_USERNAME, cls.MAIL_PASSWORD)
+            if getattr(cls, 'MAIL_USE_TLS', None):
+                secure = ()
+        mail_handler = SMTPHandler(
+            mailhost=(cls.MAIL_SERVER, cls.MAIL_PORT),
+            fromaddr=cls.MARIO_MAIL_SENDER,
+            toaddrs=[cls.ADMIN_MARIO],
+            subject=cls.MARIO_SUBJECT_PREFIX + ' Application Error',
+            credentials=credentials,
+            secure=secure)
+        mail_handler.setLevel(logging.ERROR)
+        app.logger.addHandler(mail_handler)
 
 config = {
     'development': DevelopmentConfig,
