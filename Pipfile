@@ -13,6 +13,7 @@ httpie = "*"
 coverage = "==4.4.1"
 flask = "==0.12.2"
 selenium = "*"
+gunicorn = "*"
 
 [packages]
 alembic = "==0.9.3"
@@ -38,6 +39,7 @@ SQLAlchemy = "==1.1.11"
 Werkzeug = "==0.12.2"
 WTForms = "==2.1"
 flask-login = "==0.4.0"
+flask-sslify = "*"
 
 [requires]
 python_version = "3.6"

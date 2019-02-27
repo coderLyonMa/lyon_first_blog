@@ -18,6 +18,7 @@ class Config():
     BLOG_POSTS_PER_PAGE = 10
     BLOG_FOLLOWERS_PER_PAGE = 20
     BLOG_COMMENTS_PER_PAGE = 10
+    SSL_REDIRECT = False
     
     @staticmethod
     def init_app(app):
@@ -63,10 +64,28 @@ class ProductionConfig(Config):
         mail_handler.setLevel(logging.ERROR)
         app.logger.addHandler(mail_handler)
 
+class HerokuConfig(ProductionConfig):
+    @classmethod
+    def init_app(cls, app):
+
+        # 输出到stderr
+        import logging
+        from logging import StreamHandler
+        file_handler = StreamHandler()
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+        SSL_REDIRECT = True if os.environ.get('DYNO') else False
+
+        # 处理反向代理服务器设定的首部
+        from werkzeug.contrib.fixers import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app)
+
+
 config = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'production': ProductionConfig,
+    'heroku':HerokuConfig,
     
     'default': DevelopmentConfig
 }

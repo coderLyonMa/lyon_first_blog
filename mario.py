@@ -62,7 +62,7 @@ def profile(length, profile_dir):
     app.run(debug=False)
 
 
-@manager.command
+@app.cli.command()
 def deploy():
     """Run deployment tasks."""
     upgrade()
