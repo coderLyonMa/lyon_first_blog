@@ -1,1 +1,1 @@
-web:gunicorn mario:app
+web: gunicorn mario:app
