@@ -68,7 +68,7 @@ class HerokuConfig(ProductionConfig):
     @classmethod
     def init_app(cls, app):
 
-        # 输出到stderr
+        # output to stderr
         import logging
         from logging import StreamHandler
         file_handler = StreamHandler()
@@ -76,7 +76,7 @@ class HerokuConfig(ProductionConfig):
         app.logger.addHandler(file_handler)
         SSL_REDIRECT = True if os.environ.get('DYNO') else False
 
-        # 处理反向代理服务器设定的首部
+        # dealing with reversing proxy
         from werkzeug.contrib.fixers import ProxyFix
         app.wsgi_app = ProxyFix(app.wsgi_app)
 

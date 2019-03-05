@@ -10,7 +10,6 @@ import bleach
 from blog.exceptions import ValidationError
 
 
-# 使用2的幂来表示权限
 class Permission:
     FOLLOW = 1
     COMMENT = 2
@@ -24,7 +23,6 @@ class Role(db.Model):
     name = db.Column(db.String(64), unique=True)
     default = db.Column(db.Boolean, default=False, index=True)
     permissions = db.Column(db.Integer)
-    # 3个参数分别的作用是： 指定另一侧的类名， 本侧的属性一对多表达， 加载查询而非查询结果
     users = db.relationship('User', backref='role', lazy='dynamic')
 
     def __init__(self, **kwargs):
@@ -46,7 +44,6 @@ class Role(db.Model):
     def has_permission(self, perm):
         return self.permissions & perm == perm
 
-    # 初始化创建3个角色并分配相应的权限
     @staticmethod
     def insert_roles():
         roles = {
@@ -92,19 +89,17 @@ class User(UserMixin, db.Model):
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     email = db.Column(db.String(64), unique=True, index=True)
-    # 外键指定一的那一侧
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
     avatar_hash = db.Column(db.String(32))
-    # 用户在这里是被关注者
     followed = db.relationship('Follow',
                                   foreign_keys=[Follow.follower_id],
                                   backref=db.backref('follower', lazy='joined'),
                                   lazy='dynamic',
                                   cascade='all, delete-orphan')
-    # 用户在这里是关注者
+    # user itself is followr
     followers = db.relationship('Follow',
                                   foreign_keys=[Follow.followed_id],
                                   backref=db.backref('followed', lazy='joined'),
@@ -209,7 +204,7 @@ class User(UserMixin, db.Model):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    # 刷新用户的最后访问时间
+    # refreshing last seen
     def ping(self):
         self.last_seen = datetime.utcnow()
         db.session.add(self)
@@ -266,7 +261,7 @@ class User(UserMixin, db.Model):
             return None
         return User.query.get(data['id'])
 
-    # 为api蓝本提供序列化的User信息
+    # serialize user information
     def to_json(self):
         json_user = {
             'url': url_for('api.get_user', id=self.id),
@@ -287,7 +282,7 @@ class Post(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
-    html_body = db.Column(db.Text)      # 缓存html文本
+    html_body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
@@ -316,7 +311,7 @@ class Post(db.Model):
         }
         return json_post
 
-    # 从json格式的数据创建post
+    # building post from json
     @staticmethod
     def from_json(json_post):
         body = json_post.get('body')
@@ -331,7 +326,7 @@ class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
-    html_body = db.Column(db.Text)      # 缓存html文本
+    html_body = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     disabled = db.Column(db.Boolean)
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
@@ -369,7 +364,7 @@ class Comment(db.Model):
 
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
-# 这里是怎么实现的？
+# how it works?
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
         return False
