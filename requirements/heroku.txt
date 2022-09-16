@@ -22,7 +22,7 @@ httpie==1.0.2
 idna==2.8
 itsdangerous==0.24
 Jinja2==2.9.6
-Mako==1.0.7
+Mako==1.2.2
 Markdown==3.0.1
 MarkupSafe==1.0
 Pygments==2.3.1
